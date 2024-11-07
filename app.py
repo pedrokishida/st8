@@ -1,30 +1,32 @@
 import streamlit as st
 import joblib
 import numpy as np
-import pandas as pd
+
+# Define feature names and descriptions
+feature_names = ['Mean Radius', 'Mean Texture', 'Mean Perimeter', 'Mean Area', 'Mean Smoothness',
+                 'Mean Compactness', 'Mean Concavity', 'Mean Concave Points', 'Mean Symmetry', 'Mean Fractal Dimension',
+                 'SE Radius', 'SE Texture', 'SE Perimeter', 'SE Area', 'SE Smoothness', 'SE Compactness', 'SE Concavity',
+                 'SE Concave Points', 'SE Symmetry', 'SE Fractal Dimension', 'Worst Radius', 'Worst Texture', 'Worst Perimeter',
+                 'Worst Area', 'Worst Smoothness', 'Worst Compactness', 'Worst Concavity', 'Worst Concave Points', 'Worst Symmetry',
+                 'Worst Fractal Dimension']
 
 def main():
-    st.title('Breast Cancer Prediction App')
+    st.title('Breast Cancer Prediction App by Dr. Lee')
     st.write("Enter the values for the features to get a prediction.")
 
-    # Define input fields for user to enter feature values
-    feature_1 = st.number_input('Feature 1 (Mean Radius)', min_value=0.0)
-    feature_2 = st.number_input('Feature 2 (Mean Texture)', min_value=0.0)
-    feature_3 = st.number_input('Feature 3 (Mean Perimeter)', min_value=0.0)
-    feature_4 = st.number_input('Feature 4 (Mean Area)', min_value=0.0)
-    # Add more feature inputs as needed
+    # Load sample data to pre-load default values
+    sample_data = joblib.load('scaler.pkl').inverse_transform(np.array([[0]*30]))  # Placeholder for the actual sample data
 
-    # Collect input values into a list
-    features = [feature_1, feature_2, feature_3, feature_4]  # Extend this to all necessary features
+    # Define input fields for user to enter feature values with proper labels
+    features = []
+    for i, feature in enumerate(feature_names):
+        feature_value = st.number_input(f'{feature}', min_value=0.0, value=float(sample_data[0, i]))
+        features.append(feature_value)
 
     # Handle cases where input features may need categorical encoding
     def preprocess_input(features):
         model = joblib.load('model.pkl')
         scaler = joblib.load('scaler.pkl')
-
-        # Ensure that categorical columns are handled correctly
-        # If using categorical features, convert to appropriate format
-        # Example: encoding unknown categories with 'unknown' handling
 
         # Scale the features
         features_scaled = scaler.transform(np.array(features).reshape(1, -1))
